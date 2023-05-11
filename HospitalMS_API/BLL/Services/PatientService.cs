@@ -42,6 +42,42 @@ namespace BLL.Services
             if (res != null) return true;
             return false;
         }
+        public static bool Delete(int id)
+        {
+            return (DataAccessFactory.PatientData().Delete(id));
+        }
+
+        public static int OPDCount(int PatientId)
+        {
+            int count = 0;
+            var OPDbills = DataAccessFactory.OPDBillData().Get();
+            count = OPDbills.Count(c => c.PatientId == PatientId);
+            return count;
+        }
+        public static int IPDCount(int PatientId)
+        {
+            int count = 0;
+            var IPDadmits = DataAccessFactory.IPDAdmitData().Get();
+            count = IPDadmits.Count(c => c.PatientId == PatientId);
+            return count;
+        }
+        public static int TotalPaid(int PatientID)
+        {
+            int amount = 0;
+            var PaidOPD = DataAccessFactory.OPDBillData().Get();
+            var PaidIPD = DataAccessFactory.IPDBillData().Get();
+            amount += (from p in PaidOPD where p.PatientId.Equals(PatientID) select p.PaidAmount).Sum();
+            amount += (from p in PaidIPD where p.PatientId.Equals(PatientID) select p.PaidAmount).Sum();
+            //amount = PaidOPD.Sum(p => p.Paid)
+            return amount;
+        }
+        public static int CalculateAge(DateTime Dob)
+        {
+            DateTime today = DateTime.Today;
+            int age = today.Year - Dob.Year;
+            if (today < Dob.AddYears(age)) age--;
+            return age;
+        }
 
 
         static List<PatientDTO> Convert(List<Patient> patients)
@@ -60,13 +96,16 @@ namespace BLL.Services
                     Email = patient.Email,
                     Address = patient.Address,
                     Username = patient.Username,
-                    Type = patient.Type,
-                    Prescriptions = patient.Prescriptions.ToList(),
-                    Appointments = patient.Appointments.ToList(),
-                    IPDAdmits = patient.IPDAdmits.ToList(),
-                    PerformDiags = patient.PerformDiags.ToList(),
-                    OPDBills = patient.OPDBills.ToList(),
-                    Complaints = patient.Complaints.ToList(),
+                    OPDCount = OPDCount(patient.Id),
+                    IPDCount = IPDCount(patient.Id),
+                    TotalPaid = TotalPaid(patient.Id),
+                    Age = CalculateAge(patient.DOB),
+                    //Prescriptions = patient.Prescriptions.ToList(),
+                    //Appointments = patient.Appointments.ToList(),
+                    //IPDAdmits = patient.IPDAdmits.ToList(),
+                    //PerformDiags = patient.PerformDiags.ToList(),
+                    //OPDBills = patient.OPDBills.ToList(),
+                    //Complaints = patient.Complaints.ToList(),
                 });
             }
             return data;
@@ -85,7 +124,8 @@ namespace BLL.Services
                 Email = patient.Email,
                 Address = patient.Address,
                 Username = patient.Username,
-                Type = patient.Type,
+             
+
             };
         }
         static PatientDTO Convert(Patient patient)
@@ -101,13 +141,18 @@ namespace BLL.Services
                 Email = patient.Email,
                 Address = patient.Address,
                 Username = patient.Username,
-                Type = patient.Type,
-                Prescriptions = patient.Prescriptions.ToList(),
-                Appointments = patient.Appointments.ToList(),
-                IPDAdmits = patient.IPDAdmits.ToList(),
-                PerformDiags = patient.PerformDiags.ToList(),
-                OPDBills = patient.OPDBills.ToList(),
-                Complaints = patient.Complaints.ToList(),
+                OPDCount = OPDCount(patient.Id),
+                IPDCount = IPDCount(patient.Id),
+                TotalPaid = TotalPaid(patient.Id),
+                Age = CalculateAge(patient.DOB),
+
+
+                //Prescriptions = patient.Prescriptions.ToList(),
+                //Appointments = patient.Appointments.ToList(),
+                //IPDAdmits = patient.IPDAdmits.ToList(),
+                //PerformDiags = patient.PerformDiags.ToList(),
+                //OPDBills = patient.OPDBills.ToList(),
+                //Complaints = patient.Complaints.ToList(),
             };
         }
     }

@@ -1,16 +1,21 @@
 ﻿using BLL.DTOs;
 using BLL.Services;
+using HospitalMS_API.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace HospitalMS_API.Controllers
 {
+    [EnableCors("*", "*", "*")]
     public class PatientController : ApiController
     {
+        [Logged]
+        [AdminAccess]
         [HttpGet]
         [Route("api/patient/all")]
         public HttpResponseMessage Get()
@@ -24,6 +29,7 @@ namespace HospitalMS_API.Controllers
                 return Request.CreateResponse(HttpStatusCode.BadRequest, ex.Message);
             }
         }
+        [Logged]
         [HttpGet]
         [Route("api/patient/{id}")]
         public HttpResponseMessage Get(int id)
@@ -79,6 +85,26 @@ namespace HospitalMS_API.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message, Data = patient });
             }
         }
-
+        [HttpPost]
+        [Route("api/patient/delete")]
+        public HttpResponseMessage Delete(int id)
+        {
+            try
+            {
+                var res = PatientService.Delete(id);
+                if (res)
+                {
+                    return Request.CreateResponse(HttpStatusCode.OK, new { Msg = "Delete Success" });
+                }
+                else
+                {
+                    return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = "Delete failed" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message });
+            }
+        }
     }
 }

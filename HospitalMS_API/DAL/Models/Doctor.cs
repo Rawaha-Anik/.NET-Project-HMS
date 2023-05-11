@@ -12,7 +12,6 @@ namespace DAL.Models
     {
         public int Id { get; set; }
         [Required, StringLength(25)]
-
         public string Name { get; set; }
         [StringLength(200)]
         public string AboutDoctor { get; set; }
@@ -22,9 +21,10 @@ namespace DAL.Models
         [StringLength(20)]
         public string Mobile { get; set; }
         public string Email { get; set; }
+        public string Username { get; set; }
         public string Room { get; set; }
-        public DateTime StayFrom { get; set; }
-        public DateTime StayTill { get; set; }
+        public string StayFrom { get; set; }
+        public string StayTill { get; set; }
         public DateTime JoinDate { get; set; }
         public int DeptId { get; set; }
         public int Salary { get; set; }
