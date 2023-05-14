@@ -84,6 +84,36 @@ namespace HospitalMS_API.Controllers
                 return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message, Data = obj });
             }
         }
+
+        [HttpGet]
+        [Route("api/appointment/cancel/{id}")]
+        public HttpResponseMessage CancelAppointment(int id)
+        {
+            try
+            {
+                var res = AppointmentService.CancelAppointment(id);
+                    return Request.CreateResponse(HttpStatusCode.OK, new { Msg = "Appointment cancelled"});
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message });
+            }
+        }
+        [HttpGet]
+        [Route("api/appointment/close/{id}")]
+        public HttpResponseMessage CloseAppointment(int id)
+        {
+            try
+            {
+                var res = AppointmentService.CloseAppointment(id);
+                return Request.CreateResponse(HttpStatusCode.OK, new { Msg = "Appointment closed" });
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message });
+            }
+        }
+
         [HttpPost]
         [Route("api/appointment/delete/{id}")]
         public HttpResponseMessage Delete(int id)
@@ -99,6 +129,23 @@ namespace HospitalMS_API.Controllers
                 {
                     return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = "Delete failed" });
                 }
+            }
+            catch (Exception ex)
+            {
+                return Request.CreateResponse(HttpStatusCode.InternalServerError, new { Msg = ex.Message });
+            }
+        }
+
+        [HttpGet]
+        [Route("api/appointment/available/{doctorId}/{date}")]
+        public HttpResponseMessage AvailableSlots(int doctorId, DateTime date)
+        {
+            try
+            {
+                var res = AppointmentService.AvailableSlot(doctorId, date);
+
+                return Request.CreateResponse(HttpStatusCode.OK, new { AvailableTimes = res });
+
             }
             catch (Exception ex)
             {
